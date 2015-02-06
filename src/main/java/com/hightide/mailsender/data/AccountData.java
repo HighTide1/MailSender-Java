@@ -85,8 +85,7 @@ public class AccountData{
 	 */
 	public String toString(){
 		String Data = "";
-		Data += String.format("Email UserName: %1 \n" +
-		                      "Email Password: %2", UserName, Password);
+		Data += "Email UserName: " + UserName + "\nEmail Password: " + Password;
 		return Data;
 	}
 	

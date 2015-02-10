@@ -1,5 +1,5 @@
 /**
- * FileUtilities.java		1.0  15/02/05
+ * FileUtilities.java		1.2  15/02/10
  * 
  * Copyright (C) {2015}  {Tupik, Jered}
  * 
@@ -22,6 +22,10 @@
  */
 package com.hightide.mailsender.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+
 /**
  * Utility class for various File I/O related
  * operations.
@@ -31,5 +35,43 @@ package com.hightide.mailsender.util;
  *
  */
 public class FileUtilities{
-
+	
+	/**
+	 * String of the Local User Directory for
+	 * saving config files
+	 */
+	protected static String LOCAL_DIRECTORY;
+	
+	/**
+	 * BufferedInputStream for the reading of files
+	 */
+	protected static BufferedInputStream BufferedInput;
+	
+	/**
+	 * BufferedOutputStream for the reading of files
+	 */
+	protected static BufferedOutputStream BufferedOutput;
+	
+	/**
+	 * If {@code CREATED_DIRECTORY} is false, then the User
+	 * will need to add their password and account info 
+	 * for every send. If it is true, then we can determine
+	 * if a config file exists and read from there.
+	 */
+	private static boolean CREATED_DIRECTORY = false;
+	
+	static{
+		try{
+			LOCAL_DIRECTORY = System.getProperty("user.home");
+		}catch(SecurityException SE){
+			LOCAL_DIRECTORY = "/";
+		}
+		File currDirectory = new File(LOCAL_DIRECTORY);
+		try{
+			currDirectory.mkdirs();
+			CREATED_DIRECTORY = true;
+		}catch(SecurityException SE){
+			CREATED_DIRECTORY = false;
+		}
+	}
 }

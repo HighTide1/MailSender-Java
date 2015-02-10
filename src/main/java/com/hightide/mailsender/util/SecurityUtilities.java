@@ -1,5 +1,5 @@
 /**
- * SecurityUtilities.java		1.0  15/02/05
+ * SecurityUtilities.java		1.2  15/02/10
  * 
  * Copyright (C) {2015}  {Tupik, Jered}
  * 
@@ -24,15 +24,12 @@
 package com.hightide.mailsender.util;
 
 import javax.annotation.Nonnull;
-
 import javax.swing.JOptionPane;
 
 import java.awt.HeadlessException;
-
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-
 import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.BadPaddingException;
@@ -41,7 +38,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
-
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 
@@ -125,19 +121,14 @@ public class SecurityUtilities{
 	/**
 	 * Encryptes the text with a user-given password and salt
 	 * 
+	 * @param Password The password to use for the encryption
 	 * @return The Encrypted Text
 	 */
-	public static byte[] encryptText(){
+	public static byte[] encryptText(@Nonnull char[] Password, @Nonnull byte[] decryptedBytes){
 		byte[] 		  UserInput;
-		StringBuilder encryptedText = new StringBuilder("");
-		byte[]   	  encryptedBytes = new byte[0];
-		String 		  Password = "";
-		
-		//setupSecurityUtilities();
-		
-		Password = JOptionPane.showInputDialog(null, "Please Enter the Encryption Password.", 
-				                               "PROMPT", JOptionPane.PLAIN_MESSAGE);
-		PBEKeySpecification = new PBEKeySpec(Password.toCharArray());
+		byte[]   	  encryptedBytes = null;
+
+		PBEKeySpecification = new PBEKeySpec(Password);
 		
 		try{
 			PBEKey = PBESecretKeyGenerator.generateSecret(PBEKeySpecification);
@@ -157,8 +148,7 @@ public class SecurityUtilities{
 		}
 		
 		try {
-			encryptedBytes = PBECipher.doFinal(JOptionPane.showInputDialog(null, "Please Enter the text to encrypt.", 
-					                                "PROMPT", JOptionPane.PLAIN_MESSAGE).getBytes());
+			encryptedBytes = PBECipher.doFinal(decryptedBytes);
 		} catch (HeadlessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -176,20 +166,15 @@ public class SecurityUtilities{
 	/**
 	 * Decrypts the text with a user-given password and encrypted text
 	 * 
+	 * @param Password The password used for the encryption
 	 * @param encryptedBytes The encrypted bytes to decrypt
 	 * @return The decrypted text
 	 */
-	public static byte[] decryptText(@Nonnull byte[] encryptedBytes){
+	public static byte[] decryptText(@Nonnull char[] Password, @Nonnull byte[] encryptedBytes){
 		byte[] 		  UserInput;
-		StringBuilder decryptedText = new StringBuilder("");
-		byte[]   	  decryptedBytes = new byte[0];
-		String 		  Password = "";
+		byte[]   	  decryptedBytes = null;
 		
-		//setupSecurityUtilities();
-		
-		Password = JOptionPane.showInputDialog(null, "Please Enter the Encryption Password.", 
-				                               "PROMPT", JOptionPane.PLAIN_MESSAGE);
-		PBEKeySpecification = new PBEKeySpec(Password.toCharArray());
+		PBEKeySpecification = new PBEKeySpec(Password);
 		
 		try{
 			PBEKey = PBESecretKeyGenerator.generateSecret(PBEKeySpecification);

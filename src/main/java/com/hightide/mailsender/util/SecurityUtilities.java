@@ -85,7 +85,7 @@ public class SecurityUtilities{
 	 * Otherwise, the security of your files
 	 * cannot be guaranteed.
 	 */
-	private static byte[] SALT = {
+	private static final byte[] SALT = {
 		(byte)0x7F, (byte)0x09, (byte)0xFF, (byte)0xAD,
 		(byte)0xA8, (byte)0x00, (byte)0xCF, (byte)0x9A
 	};
@@ -97,7 +97,7 @@ public class SecurityUtilities{
 	 * Otherwise, the security of your files
 	 * cannot be guaranteed.
 	 */
-	private static int ITER_COUNT = 10;
+	private static final int ITER_COUNT = 10;
 	
 	//public static void setupSecurityUtilities(){
 	static{

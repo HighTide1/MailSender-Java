@@ -22,9 +22,16 @@
  */
 package com.hightide.mailsender.util;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+
+import java.nio.file.attribute.*;
+
+import javax.annotation.Nonnull;
 
 /**
  * Utility class for various File I/O related
@@ -37,41 +44,55 @@ import java.io.File;
 public class FileUtilities{
 	
 	/**
-	 * String of the Local User Directory for
-	 * saving config files
+	 * <p>Writes the given information, {@code FileData} to {@code FileName} in the 
+	 * given {@code Directory} if it exists. Otherwise, it will try to create
+	 * {@code FileName} in {@code Directory} and write to it.</p>
+	 * <p>If this fails, the method will simply quit.</p>
+	 * 
+	 * @param Directory The current directory to write to.
+	 * @param FileName The file to create/append to.
+	 * @param FileData The information to write to the file.
 	 */
-	protected static String LOCAL_DIRECTORY;
-	
-	/**
-	 * BufferedInputStream for the reading of files
-	 */
-	protected static BufferedInputStream BufferedInput;
-	
-	/**
-	 * BufferedOutputStream for the reading of files
-	 */
-	protected static BufferedOutputStream BufferedOutput;
-	
-	/**
-	 * If {@code CREATED_DIRECTORY} is false, then the User
-	 * will need to add their password and account info 
-	 * for every send. If it is true, then we can determine
-	 * if a config file exists and read from there.
-	 */
-	private static boolean CREATED_DIRECTORY = false;
-	
-	static{
-		try{
-			LOCAL_DIRECTORY = System.getProperty("user.home");
-		}catch(SecurityException SE){
-			LOCAL_DIRECTORY = "/";
+	public static void writeToFile(@Nonnull String Directory, @Nonnull String FileName, 
+			                       @Nonnull byte[] FileData){
+		Path DirectoryPath = Paths.get(Directory);
+		if(!Files.exists(DirectoryPath)){
+			try{
+				Files.createDirectory(DirectoryPath);
+			}catch(IOException IOE){
+				System.err.println("Unable to create/edit directory");
+				return;
+			}
 		}
-		File currDirectory = new File(LOCAL_DIRECTORY);
+		Path FilePath = Paths.get(Directory, FileName);
 		try{
-			currDirectory.mkdirs();
-			CREATED_DIRECTORY = true;
-		}catch(SecurityException SE){
-			CREATED_DIRECTORY = false;
+			if(!Files.exists(FilePath)){
+				Files.createFile(FilePath);
+			}
+			Files.write(FilePath, FileData, StandardOpenOption.WRITE, 
+					    StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.SPARSE);
+		}catch(IOException IOE){
+			System.err.println("Unable to write to file.");
+			return;
 		}
+	}
+	
+	/**
+	 * <p>Reads {@code FileName}, which is located in {@code Directory}, into a byte array.
+	 * If the file does not exist, it will return an empty array.
+	 * 
+	 * @param Directory The current directory to write to.
+	 * @param FileName The file to create/append to.
+	 * @return A byte array comprised of the file's data.
+	 */
+	public static byte[] readFile(@Nonnull String Directory, @Nonnull String FileName){
+		byte[] FileData = null;
+		Path FilePath = Paths.get(Directory, FileName);
+		try{
+			FileData = Files.readAllBytes(FilePath);
+		}catch(IOException FNFE){
+			System.err.println("Unable to read file.");
+		}
+		return FileData;
 	}
 }
